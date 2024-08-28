@@ -44,13 +44,15 @@ function SideNav() {
   return (
     <div className='h-screen p-5 border shadow-sm'>
     <Image
+    alt='logo'
     src={'/logo.svg'}
     width={160}
     height={100}
+    placeholder='empty'
     />
         <div className='mt-5'>
         {menuList.map((menu,index)=>(
-            <Link href={menu.path}>
+            <Link href={menu.path} key={menu.id}>
             <h2 className={`flex gap-2 items-center 
             text-gray-500 font-medium
             p-5 cursor-pointer rounded-md

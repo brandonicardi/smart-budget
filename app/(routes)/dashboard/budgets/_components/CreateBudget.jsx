@@ -15,9 +15,11 @@ import { Input } from '@/components/ui/input'
 import { Budgets } from '@/utils/schema'
 import { toast } from 'sonner'
 import { DialogClose } from '@radix-ui/react-dialog'
+import { useUser } from '@clerk/nextjs'
+import { db } from '@/utils/dbConfig'
 
 
-function CreateBudget() {
+function CreateBudget({refreshData}) {
 
     const [emojiIcon,setEmojiIcon]=useState('😀');
     const [openEmojiPicker,setOpenEmojiPicker]=useState(false)
@@ -37,12 +39,13 @@ function CreateBudget() {
         .values({
             name:name,
             amount:amount,
-            createdBy:user?.primaryEmailAddress.EmailAddress,
+            createdBy:user?.primaryEmailAddress.emailAddress,
             icon:emojiIcon
         }).returning({insertedId:Budgets.id})
 
         if(result)
         {
+            refreshData()
             toast('Presupuesto creado correctamente')
         }
 
@@ -51,13 +54,12 @@ function CreateBudget() {
 
     return (
       <div>
-
             <Dialog>
                 <DialogTrigger asChild>
-                <div className='bg-slate-100 p-10 rounded-md
+                <div className='bg-slate-100 p-12 rounded-md
             items-center flex flex-col border-2 border-dashed
             cursor-pointer hover:shadow-md'>
-                <h2 className='text-3xl'></h2>
+                <h2 className='text-3xl'>+</h2>
                 <h2>Crear nuevo presupuesto</h2>
             </div>
                 </DialogTrigger>
@@ -73,7 +75,7 @@ function CreateBudget() {
                         >{emojiIcon}
                         </Button>
                            
-                            <div className='absolute'>
+                            <div className='absolute z-20'>
                             <EmojiPicker
                             open={openEmojiPicker}
                             onEmojiClick={(e)=>{
@@ -98,11 +100,6 @@ function CreateBudget() {
                                 onChange={(e)=>setAmount(e.target.value)}/>
                             </div> 
 
-                            <Button 
-                            disabled={!(name&&amount)}
-                            onClick={()=>onCreateBudget()}
-                            className='mt-5 w-full'>Crear presupuesto</Button>
-
                         </div>                  
                     </DialogDescription>
                     </DialogHeader>
@@ -116,7 +113,7 @@ function CreateBudget() {
 
                 </DialogClose>
                 </DialogFooter>
-                </DialogContent>
+                </DialogContent> 
                 </Dialog>
       </div>
      )
